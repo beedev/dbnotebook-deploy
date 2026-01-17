@@ -550,6 +550,32 @@ The `model` parameter accepts model names from multiple providers. The provider 
 {"model": "gemini-1.5-pro"}
 ```
 
+### Model Selection Guide
+
+| Use Case | Recommended Model | Reason |
+|----------|-------------------|--------|
+| High concurrency (100+ users) | `gpt-4o-mini` | High rate limits, reliable |
+| Fast responses | `meta-llama/llama-4-maverick-17b-128e-instruct` | ~3x faster than OpenAI |
+| Long context (large docs) | `gpt-4.1` or `gpt-4.1-mini` | 1M token context window |
+| Local/private | `llama3.1:latest` | No data leaves your server |
+| Complex reasoning | `gpt-4.1` or `claude-sonnet-4` | Best accuracy |
+
+### Rate Limits
+
+| Provider | Rate Limit | Concurrent Users |
+|----------|------------|------------------|
+| OpenAI | High | 100+ ✅ |
+| Groq | ~300K tokens/min | 10-20 (may hit 429) |
+| Ollama | Unlimited (local) | Limited by hardware |
+| Anthropic | Varies by tier | Check your plan |
+| Gemini | Varies by tier | Check your plan |
+
+**Load Test Results (v8.3.0):**
+- GPT-4o-mini: 100% success at 100 concurrent users (staggered 10/batch)
+- Groq Maverick: 46% failure rate at 100 concurrent users (429 rate limits)
+
+For high-concurrency production use, OpenAI models are recommended.
+
 ---
 
 ## Concurrent Usage
