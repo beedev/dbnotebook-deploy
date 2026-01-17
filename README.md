@@ -60,7 +60,7 @@ Docker deployment for DBNotebook - A multimodal RAG system with NotebookLM-style
 
 7. **Access the application**
 
-   Open http://localhost:7860 in your browser.
+   Open http://localhost:7007 in your browser.
 
 ### First Use
 
@@ -232,7 +232,7 @@ sudo -u postgres psql
 All API requests require an `X-API-Key` header:
 
 ```bash
-curl http://localhost:7860/api/query/notebooks \
+curl http://localhost:7007/api/query/notebooks \
   -H "X-API-Key: YOUR_API_KEY"
 ```
 
@@ -241,14 +241,14 @@ Default admin API key: `dbn_00000000000000000000000000000001`
 ### List Notebooks
 
 ```bash
-curl http://localhost:7860/api/query/notebooks \
+curl http://localhost:7007/api/query/notebooks \
   -H "X-API-Key: YOUR_API_KEY"
 ```
 
 ### Execute a Query
 
 ```bash
-curl -X POST http://localhost:7860/api/query \
+curl -X POST http://localhost:7007/api/query \
   -H "Content-Type: application/json" \
   -H "X-API-Key: YOUR_API_KEY" \
   -d '{
@@ -265,7 +265,7 @@ The API supports multi-turn conversations. Send a `session_id` (UUID) to enable 
 SESSION_ID=$(uuidgen)
 
 # First query
-curl -X POST http://localhost:7860/api/query \
+curl -X POST http://localhost:7007/api/query \
   -H "Content-Type: application/json" \
   -H "X-API-Key: YOUR_API_KEY" \
   -d "{
@@ -275,7 +275,7 @@ curl -X POST http://localhost:7860/api/query \
   }"
 
 # Follow-up (has context)
-curl -X POST http://localhost:7860/api/query \
+curl -X POST http://localhost:7007/api/query \
   -H "Content-Type: application/json" \
   -H "X-API-Key: YOUR_API_KEY" \
   -d "{
@@ -333,7 +333,7 @@ python scripts/query_api_example.py --model gpt-4.1-mini --top-k 10 --no-reranke
 
 **Environment Variables:**
 ```bash
-export DBNOTEBOOK_API_URL="http://localhost:7860"
+export DBNOTEBOOK_API_URL="http://localhost:7007"
 export DBNOTEBOOK_API_KEY="your-api-key"
 export DBNOTEBOOK_NOTEBOOK_ID="your-notebook-uuid"
 ```
@@ -364,23 +364,23 @@ export DBNOTEBOOK_NOTEBOOK_ID="your-notebook-uuid"
 
 ```bash
 # Login
-curl -X POST http://localhost:7860/api/auth/login \
+curl -X POST http://localhost:7007/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"username": "admin", "password": "admin123"}'
 
 # Get current user
-curl http://localhost:7860/api/auth/me \
+curl http://localhost:7007/api/auth/me \
   -H "X-API-Key: YOUR_API_KEY"
 
 # Logout
-curl -X POST http://localhost:7860/api/auth/logout
+curl -X POST http://localhost:7007/api/auth/logout
 ```
 
 ### User Management (Admin Only)
 
 ```bash
 # Create user
-curl -X POST http://localhost:7860/api/admin/users \
+curl -X POST http://localhost:7007/api/admin/users \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ADMIN_API_KEY" \
   -d '{
@@ -391,7 +391,7 @@ curl -X POST http://localhost:7860/api/admin/users \
   }'
 
 # List users
-curl http://localhost:7860/api/admin/users \
+curl http://localhost:7007/api/admin/users \
   -H "X-API-Key: ADMIN_API_KEY"
 ```
 
@@ -405,7 +405,7 @@ curl http://localhost:7860/api/admin/users \
 
 ```bash
 # Grant access
-curl -X POST http://localhost:7860/api/admin/notebooks/<notebook_id>/access \
+curl -X POST http://localhost:7007/api/admin/notebooks/<notebook_id>/access \
   -H "Content-Type: application/json" \
   -H "X-API-Key: ADMIN_API_KEY" \
   -d '{"user_id": "...", "access_level": "editor"}'
@@ -419,7 +419,7 @@ curl -X POST http://localhost:7860/api/admin/notebooks/<notebook_id>/access \
 
 ```bash
 # Regenerate own API key
-curl -X POST http://localhost:7860/api/auth/api-key \
+curl -X POST http://localhost:7007/api/auth/api-key \
   -H "X-API-Key: YOUR_CURRENT_KEY"
 ```
 
