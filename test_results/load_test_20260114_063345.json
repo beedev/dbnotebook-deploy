@@ -1,0 +1,41 @@
+{
+  "timestamp": "2026-01-14T06:33:45.375947",
+  "config": {
+    "base_url": "http://localhost:7007",
+    "notebook_id": "1ee3d377-dcac-41d5-8bfd-531f225a5d78",
+    "concurrency_levels": [
+      50
+    ],
+    "requests_per_level": 10
+  },
+  "results": [
+    {
+      "concurrency": 50,
+      "total_requests": 10,
+      "successful_requests": 2,
+      "failed_requests": 8,
+      "success_rate": 20.0,
+      "throughput": 0.016554160180159514,
+      "latency": {
+        "avg": 74326.24981403351,
+        "min": 24839.57576751709,
+        "max": 120813.99297714233,
+        "p50": 80323.3835697174,
+        "p95": 120813.99297714233,
+        "p99": 120813.99297714233
+      },
+      "timing_breakdown": {
+        "1_notebook_lookup_ms": 2,
+        "2_node_cache_ms": 9,
+        "3_create_retriever_ms": 1068,
+        "4_chunk_retrieval_ms": 31488.5,
+        "5_format_sources_ms": 0,
+        "6_raptor_total_ms": 26178,
+        "6a_raptor_embedding_ms": 26136.5,
+        "6b_raptor_lookup_ms": 40,
+        "7_context_building_ms": 0,
+        "8_llm_completion_ms": 21461.5
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker volume:*)",
+      "Bash(docker exec:*)",
+      "Bash(source:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(docker info:*)",
+      "Bash(lsof:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "simple-ai-provenance"
+  ]
+}

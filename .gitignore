@@ -1,0 +1,25 @@
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.venv/
+venv/
+
+# Data and outputs (optional - remove if you want to track)
+data/
+outputs/
+
+# IDE
+.idea/
+.vscode/
+*.swp

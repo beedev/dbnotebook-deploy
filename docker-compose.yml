@@ -1,0 +1,83 @@
+services:
+  dbnotebook:
+    image: dbnotebook:latest
+    container_name: dbnotebook
+    build: .
+    ports:
+      - "7007:7860"
+    env_file:
+      - .env
+    environment:
+      # Docker-specific overrides (uses .env values with defaults)
+      # Uses DATABASE_URL from .env (host.docker.internal for local PostgreSQL)
+      - DATABASE_URL=${DATABASE_URL}
+      - POSTGRES_HOST=${POSTGRES_HOST:-host.docker.internal}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_DB=${POSTGRES_DB:-dbnotebook_dev}
+      - POSTGRES_USER=${POSTGRES_USER:-dbnotebook}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-dbnotebook}
+      - OLLAMA_HOST=host.docker.internal
+      # SQL Chat dev mode - skip read-only check for testing
+      - SQL_CHAT_SKIP_READONLY_CHECK=true
+      # API Key for /api/query endpoint (programmatic access)
+      - API_KEY=${API_KEY:-}
+      # RBAC - role-based access control (disabled by default)
+      - RBAC_STRICT_MODE=${RBAC_STRICT_MODE:-false}
+      # Flask session secret key (required for consistent sessions across workers)
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-dbnotebook-session-secret-key-2026}
+    # Note: Using local PostgreSQL (no depends_on needed)
+    volumes:
+      - ./config:/app/config:ro # models.yaml - editable
+      - ./data:/app/data # documents, cache
+      - ./outputs:/app/outputs # generated content
+      - ./uploads:/app/uploads # user uploads
+      #- ./dbnotebook:/app/dbnotebook # backend source - instant code changes
+      #- ./frontend/dist:/app/frontend/dist:ro # frontend build - npm run build
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - dbnotebook_network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:7860/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+  # PostgreSQL service - COMMENTED OUT (using local PostgreSQL instead)
+  # Uncomment if you need containerized PostgreSQL
+  # postgres:
+  #   container_name: dbnotebook_postgres
+  #   image: pgvector/pgvector:pg16
+  #   ports:
+  #     - "5433:5432"
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER:-dbnotebook}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dbnotebook}
+  #     POSTGRES_DB: ${POSTGRES_DB:-dbnotebook_dev}
+  #   command:
+  #     - "postgres"
+  #     - "-c"
+  #     - "log_statement=none"
+  #     - "-c"
+  #     - "log_min_messages=warning"
+  #     - "-c"
+  #     - "log_min_error_statement=error"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - dbnotebook_network
+  #   restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+
+networks:
+  dbnotebook_network:
+    driver: bridge
