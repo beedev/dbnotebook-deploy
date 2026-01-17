@@ -8,7 +8,8 @@ Docker deployment for DBNotebook - A multimodal RAG system with NotebookLM-style
 
 - Docker and Docker Compose
 - **OpenAI API key** (required for embeddings)
-- Google API key (required for infographics generation)
+- **Groq API key** (recommended for fast LLM inference)
+- Google API key (optional, for infographics generation)
 
 ### Deployment Steps
 
@@ -24,7 +25,8 @@ Docker deployment for DBNotebook - A multimodal RAG system with NotebookLM-style
    ```
 
    Edit `.env` and update:
-   - **API Keys**: Set `OPENAI_API_KEY` (required for embeddings), `GOOGLE_API_KEY` (for infographics)
+   - **API Keys**: Set `OPENAI_API_KEY` (required for embeddings), `GROQ_API_KEY` (recommended for LLM)
+   - **Optional**: `GOOGLE_API_KEY` (for infographics), `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`
    - **Database name**: Change `POSTGRES_DB` if needed (default: `dbnotebook_debug`)
 
 3. **Pull the latest image**
@@ -72,15 +74,25 @@ Docker deployment for DBNotebook - A multimodal RAG system with NotebookLM-style
 
 ## LLM Providers
 
-**Ollama (default)**
-- Ensure Ollama is running on your host machine
-- The container connects via `host.docker.internal`
+**Groq (Recommended)**
+- Fast inference with Llama models
+- Set `GROQ_API_KEY` in `.env`
+- Models: `meta-llama/llama-4-maverick-17b-128e-instruct`, `llama-3.3-70b-versatile`
+- Rate limit: ~300K tokens/min (use staggered requests for high concurrency)
 
-**OpenAI/Anthropic/Gemini**
-- Set `LLM_PROVIDER` to your chosen provider in `.env`
-- Add the corresponding API key
+**OpenAI**
+- Set `OPENAI_API_KEY` in `.env`
+- Models: `gpt-4.1-mini`, `gpt-4.1` (1M context), `gpt-4o`, `gpt-4o-mini`
 
-> **Note:** Embeddings currently require OpenAI API key regardless of LLM provider.
+**Anthropic**
+- Set `ANTHROPIC_API_KEY` in `.env`
+- Models: `claude-sonnet-4-20250514`, `claude-3-5-haiku-latest`
+
+**Google Gemini**
+- Set `GEMINI_API_KEY` in `.env`
+- Models: `gemini-2.0-flash`, `gemini-1.5-pro`
+
+> **Note:** Embeddings require OpenAI API key regardless of LLM provider.
 
 ## Configuration Files
 
@@ -116,13 +128,6 @@ docker compose exec dbnotebook alembic history
 ```
 
 ## Troubleshooting
-
-### Ollama connection issues
-
-On Linux, use your host IP instead of `host.docker.internal`:
-```bash
-OLLAMA_HOST=172.17.0.1  # Docker bridge IP
-```
 
 ### Container logs
 
@@ -295,13 +300,12 @@ curl -X POST http://localhost:7860/api/query \
 
 ### Supported Models
 
-| Provider | Models |
-|----------|--------|
-| OpenAI | `gpt-4.1-mini`, `gpt-4.1`, `gpt-4o`, `gpt-4o-mini` |
-| Groq | `meta-llama/llama-4-maverick-17b-128e-instruct`, `llama-3.3-70b-versatile` |
-| Ollama | `llama3.1:latest`, `mistral:latest` |
-| Anthropic | `claude-sonnet-4-20250514`, `claude-3-5-haiku-latest` |
-| Gemini | `gemini-2.0-flash`, `gemini-1.5-pro` |
+| Provider | Models | Notes |
+|----------|--------|-------|
+| Groq | `meta-llama/llama-4-maverick-17b-128e-instruct`, `llama-3.3-70b-versatile` | Fast inference, recommended |
+| OpenAI | `gpt-4.1-mini`, `gpt-4.1`, `gpt-4o`, `gpt-4o-mini` | gpt-4.1 has 1M context |
+| Anthropic | `claude-sonnet-4-20250514`, `claude-3-5-haiku-latest` | |
+| Gemini | `gemini-2.0-flash`, `gemini-1.5-pro` | |
 
 ### Python Example Script
 
